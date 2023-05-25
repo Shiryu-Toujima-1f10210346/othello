@@ -1,57 +1,61 @@
+import { useState } from 'react';
 import styles from './index.module.css';
 // aaa
 const Home = () => {
+  const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
+  const [board, setBoard] = useState([
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 1, 2, 0, 0, 0],
+    [0, 0, 0, 2, 1, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
+  ]);
+  const onClick = (x: number, y: number) => {
+    console.log(x, y);
+    const newBoard: number[][] = JSON.parse(JSON.stringify(board));
+
+    if (newBoard[y][x] === 0) {
+      setTurnColor(3 - turnColor);
+      newBoard[y][x] = turnColor;
+    }
+    setBoard(newBoard);
+    for (let i = 1; i < 8; i++) {
+      if (y - i >= 0 && x - i >= 0) {
+        if (newBoard[y - i][x - i] === turnColor) {
+          break;
+        } else if (newBoard[y - i][x - i] !== turnColor) {
+          for (let j = 2; j < 7; j++) {
+            if (y - j >= 0 && x - j >= 0 && newBoard[y - j][x - j] === turnColor) {
+              console.log(`${j}LT`);
+              for (let k = j; 1 < k; k--) {
+                newBoard[y - k + 1][x - k + 1] = turnColor;
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+  };
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code} style={{ backgroundColor: '#fafafa' }}>
-            pages/index.js
-          </code>
-        </p>
-
-        <div className={styles.grid}>
-          <a className={styles.card} href="https://nextjs.org/docs">
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a className={styles.card} href="https://nextjs.org/learn">
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a className={styles.card} href="https://github.com/vercel/next.js/tree/master/examples">
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            className={styles.card}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <img src="vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      <div className={styles.board}>
+        {board.map((row, y) =>
+          row.map((color, x) => (
+            <div className={styles.cell} key={`${x}-${y}`} onClick={() => onClick(x, y)}>
+              {color !== 0 && (
+                <div
+                  className={styles.stone}
+                  style={{ background: color === 1 ? '#000' : '#fff' }}
+                />
+              )}
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
