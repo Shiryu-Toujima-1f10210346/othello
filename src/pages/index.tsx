@@ -278,7 +278,8 @@ const Home = () => {
           let checked = false;
           if (newBoard[a][b] === 1 || newBoard[a][b] === 2) {
             //白か黒はスキップ
-            break;
+            console.log(b, a, 'は白か黒');
+            continue;
           }
           for (const t of direction) {
             if (
@@ -286,10 +287,12 @@ const Home = () => {
               newBoard[a + t[0]] === undefined || //枠外ならスキップ
               newBoard[a + t[0]][b + t[1]] === undefined || //枠外ならスキップ
               newBoard[a + t[0]][b + t[1]] === 0 || //空白マスならスキップ
-              newBoard[a + t[0]][b + t[1]] === -1 //不可マスならスキップ
+              newBoard[a + t[0]][b + t[1]] === -1 || //不可マスならスキップ
+              newBoard[a + t[0]][b + t[1]] !== turnColor //自分の色ならスキップ
             ) {
+              console.log(b, a, t, '方向はスキップ');
               continue;
-            } else if (newBoard[a + t[0]][b + t[1]] === turnColor) {
+            } else {
               //見た方向が自分の色じゃないなら
               for (let c = 2; c < 7; c++) {
                 if (
@@ -300,6 +303,7 @@ const Home = () => {
                 ) {
                   continue;
                 } else if (newBoard[a + t[0] * c][b + t[1] * c] !== turnColor) {
+                  console.log(b, a, 'は置けます');
                   newBoard[a][b] = 0;
                   checked = true;
                   break;
@@ -307,13 +311,15 @@ const Home = () => {
               }
             }
           }
+
           if (checked === false) {
+            console.log(b, a, 'は置けません');
             newBoard[a][b] = -1;
           }
         }
         setBoard(newBoard);
         // .turnクラスの文字を変更する
-        /*
+
         if (turnColor === 1) {
           setTurnColor(2);
           document.getElementsByClassName(styles.turn)[0].innerHTML = '白のターン';
@@ -322,13 +328,12 @@ const Home = () => {
           setTurnColor(1);
           document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
         }
-        */
       }
     }
   };
   return (
     <div className={styles.container}>
-      <div className={styles.turn}>ターン</div>
+      <div className={styles.turn}>黒のターン</div>
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => (
