@@ -138,3 +138,7 @@
   border-radius: 50%;
   background: white;
 }
+
+.turn {
+  font-size: 100px;
+}

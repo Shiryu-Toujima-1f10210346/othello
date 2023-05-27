@@ -4,14 +4,23 @@ import styles from './index.module.css';
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
   const [board, setBoard] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    /*[0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 1, 2, 0, 0, 0],
     [0, 0, 0, 2, 1, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],*/
+
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, 0, -1, -1, -1],
+    [-1, -1, -1, 1, 2, 0, -1, -1],
+    [-1, -1, 0, 2, 1, -1, -1, -1],
+    [-1, -1, -1, 0, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
   ]);
   const onClick = (x: number, y: number) => {
     console.log(x, y);
@@ -20,6 +29,8 @@ const Home = () => {
     if (newBoard[y][x] === 0) {
       setTurnColor(3 - turnColor);
       newBoard[y][x] = turnColor;
+
+      //ひっくり返し処理
       /*ここから左上 */
       for (let i = 1; i < 8; i++) {
         if (y - i >= 0 && x - i >= 0) {
@@ -251,11 +262,73 @@ const Home = () => {
       }
       /*ここまで右下 */
 
-      setBoard(newBoard);
+      // おけるマスを0にする
+      const direction = [
+        [-1, -1],
+        [-1, 0],
+        [-1, 1],
+        [0, 1],
+        [1, 1],
+        [1, 0],
+        [1, -1],
+        [0, -1],
+      ];
+      for (let a = 0; a < 8; a++) {
+        for (let b = 0; b < 8; b++) {
+          let checked = false;
+          if (newBoard[a][b] === 1 || newBoard[a][b] === 2) {
+            //白か黒はスキップ
+            break;
+          }
+          for (const t of direction) {
+            if (
+              //見た方向が→
+              newBoard[a + t[0]] === undefined || //枠外ならスキップ
+              newBoard[a + t[0]][b + t[1]] === undefined || //枠外ならスキップ
+              newBoard[a + t[0]][b + t[1]] === 0 || //空白マスならスキップ
+              newBoard[a + t[0]][b + t[1]] === -1 //不可マスならスキップ
+            ) {
+              continue;
+            } else if (newBoard[a + t[0]][b + t[1]] === turnColor) {
+              //見た方向が自分の色じゃないなら
+              for (let c = 2; c < 7; c++) {
+                if (
+                  newBoard[a + t[0] * c] === undefined || //枠外ならスキップ
+                  newBoard[a + t[0] * c][b + t[1] * c] === undefined || //枠外ならスキップ
+                  newBoard[a + t[0] * c][b + t[1] * c] === 0 || //空白マスならスキップ
+                  newBoard[a + t[0] * c][b + t[1] * c] === -1 //不可マスならスキップ
+                ) {
+                  continue;
+                } else if (newBoard[a + t[0] * c][b + t[1] * c] !== turnColor) {
+                  newBoard[a][b] = 0;
+                  checked = true;
+                  break;
+                }
+              }
+            }
+          }
+          if (checked === false) {
+            newBoard[a][b] = -1;
+          }
+        }
+        setBoard(newBoard);
+        // .turnクラスの文字を変更する
+        /*
+        if (turnColor === 1) {
+          setTurnColor(2);
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '白のターン';
+        }
+        if (turnColor === 2) {
+          setTurnColor(1);
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
+        }
+        */
+      }
     }
   };
   return (
     <div className={styles.container}>
+      <div className={styles.turn}>ターン</div>
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((color, x) => (
@@ -263,7 +336,9 @@ const Home = () => {
               {color !== 0 && (
                 <div
                   className={styles.stone}
-                  style={{ background: color === 1 ? '#000' : '#fff' }}
+                  //style={{ background: color === 1 ? '#000' : '#fff' }}
+                  //-1 なら黄色 1 なら黒 2 なら白
+                  style={{ background: color === -1 ? '#ffb1b1' : color === 1 ? '#000' : '#fff' }}
                 />
               )}
             </div>
