@@ -338,14 +338,21 @@ const Home = () => {
         {board.map((row, y) =>
           row.map((color, x) => (
             <div className={styles.cell} key={`${x}-${y}`} onClick={() => onClick(x, y)}>
-              {color !== 0 && (
-                <div
-                  className={styles.stone}
-                  //style={{ background: color === 1 ? '#000' : '#fff' }}
-                  //-1 なら黄色 1 なら黒 2 なら白
-                  style={{ background: color === -1 ? '#ffb1b1' : color === 1 ? '#000' : '#fff' }}
-                />
-              )}
+              <div
+                className={styles.stone}
+                style={{
+                  background:
+                    color === -1
+                      ? 'transparent'
+                      : color === 1
+                      ? '#000'
+                      : color === 2
+                      ? '#fff'
+                      : 'blue',
+                  height: color === 0 ? '30%' : '80%',
+                  width: color === 0 ? '30%' : '80%',
+                }}
+              />
             </div>
           ))
         )}
