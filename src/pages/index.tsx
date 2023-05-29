@@ -4,15 +4,7 @@ import styles from './index.module.css';
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
   const [board, setBoard] = useState([
-    /*[0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 1, 2, 0, 0, 0],
-    [0, 0, 0, 2, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],*/
-
+    /*
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, 0, -1, -1, -1],
@@ -20,7 +12,16 @@ const Home = () => {
     [-1, -1, 0, 2, 1, -1, -1, -1],
     [-1, -1, -1, 0, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],*/
+
     [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [1, 2, 0, -1, -1, -1, -1, -1],
+    [1, 2, 0, -1, -1, -1, -1, -1],
   ]);
   const onClick = (x: number, y: number) => {
     console.log(x, y);
@@ -273,12 +274,13 @@ const Home = () => {
         [1, -1],
         [0, -1],
       ];
+      let pass = true;
       for (let a = 0; a < 8; a++) {
         for (let b = 0; b < 8; b++) {
           let checked = false;
           if (newBoard[a][b] === 1 || newBoard[a][b] === 2) {
             //白か黒はスキップ
-            console.log(b, a, 'は白か黒');
+            //console.log(b, a, 'は白か黒');
             continue;
           }
           for (const t of direction) {
@@ -286,11 +288,14 @@ const Home = () => {
               //見た方向が→
               newBoard[a + t[0]] === undefined || //枠外ならスキップ
               newBoard[a + t[0]][b + t[1]] === undefined || //枠外ならスキップ
-              newBoard[a + t[0]][b + t[1]] === 0 || //空白マスならスキップ
               newBoard[a + t[0]][b + t[1]] === -1 || //不可マスならスキップ
               newBoard[a + t[0]][b + t[1]] !== turnColor //自分の色ならスキップ
             ) {
-              console.log(b, a, t, '方向はスキップ');
+              //console.log(b, a, t, '方向はスキップ');
+              continue;
+            } else if (newBoard[a + t[0]][b + t[1]] === 0) {
+              //空白マスならスキップ
+              pass = false;
               continue;
             } else {
               //見た方向が自分の色じゃないなら
@@ -303,8 +308,9 @@ const Home = () => {
                 ) {
                   continue;
                 } else if (newBoard[a + t[0] * c][b + t[1] * c] !== turnColor) {
-                  console.log(b, a, 'は置けます');
+                  //console.log(b, a, 'は置けます');
                   newBoard[a][b] = 0;
+                  pass = false;
                   checked = true;
                   break;
                 }
@@ -313,21 +319,26 @@ const Home = () => {
           }
 
           if (checked === false) {
-            console.log(b, a, 'は置けません');
+            //console.log(b, a, 'は置けません');
             newBoard[a][b] = -1;
           }
         }
-        setBoard(newBoard);
-        // .turnクラスの文字を変更する
+        // pass
+      }
+      if (pass) {
+        setTurnColor(3 - turnColor);
+        console.log(turnColor, 'パス');
+      }
+      setBoard(newBoard);
+      // .turnクラスの文字を変更する
 
-        if (turnColor === 1) {
-          setTurnColor(2);
-          document.getElementsByClassName(styles.turn)[0].innerHTML = '白のターン';
-        }
-        if (turnColor === 2) {
-          setTurnColor(1);
-          document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
-        }
+      if (turnColor === 1) {
+        setTurnColor(2);
+        document.getElementsByClassName(styles.turn)[0].innerHTML = '白のターン';
+      }
+      if (turnColor === 2) {
+        setTurnColor(1);
+        document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
       }
     }
   };
