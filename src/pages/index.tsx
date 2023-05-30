@@ -4,30 +4,29 @@ import styles from './index.module.css';
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
   const [board, setBoard] = useState([
-    /*[-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, 0, -1, -1, -1],
     [-1, -1, -1, 1, 2, 0, -1, -1],
     [-1, -1, 0, 2, 1, -1, -1, -1],
     [-1, -1, -1, 0, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, -1, -1, -1, -1, -1, -1],*/
+    [-1, -1, -1, -1, -1, -1, -1, -1],
 
-    [-1, -1, -1, -1, -1, -1, -1, -1],
+    /* [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [1, 2, 0, -1, -1, -1, -1, -1],
-    [1, 2, 0, -1, -1, -1, -1, -1],
+    [1, 2, 0, -1, -1, -1, -1, -1],*/
   ]);
   const onClick = (x: number, y: number) => {
     console.log(y, x);
-
     const newBoard: number[][] = JSON.parse(JSON.stringify(board));
     let pass = true;
-    function predict() {
+    function predict(turn: number) {
       const direction = [
         [-1, -1],
         [-1, 0],
@@ -53,13 +52,13 @@ const Home = () => {
               newBoard[a + t[0]] === undefined || //枠外ならスキップ
               newBoard[a + t[0]][b + t[1]] === undefined || //枠外ならスキップ
               newBoard[a + t[0]][b + t[1]] === -1 || //不可マスならスキップ
-              newBoard[a + t[0]][b + t[1]] !== turnColor //自分の色ならスキップ
+              newBoard[a + t[0]][b + t[1]] !== turn //自分の色ならスキップ
             ) {
               //console.log(b, a, t, '方向はスキップ');
               continue;
             } else if (newBoard[a + t[0]][b + t[1]] === 0) {
-              //空白マスならスキップ
-              pass = false;
+              //おけるマスならスキップ
+
               continue;
             } else {
               //見た方向が自分の色じゃないなら
@@ -67,11 +66,11 @@ const Home = () => {
                 if (
                   newBoard[a + t[0] * c] === undefined || //枠外ならスキップ
                   newBoard[a + t[0] * c][b + t[1] * c] === undefined || //枠外ならスキップ
-                  newBoard[a + t[0] * c][b + t[1] * c] === 0 || //空白マスならスキップ
-                  newBoard[a + t[0] * c][b + t[1] * c] === -1 //不可マスならスキップ
+                  newBoard[a + t[0] * c][b + t[1] * c] === 0 || //おけるマスならスキップ
+                  newBoard[a + t[0] * c][b + t[1] * c] === -1 //空白マスならスキップ
                 ) {
-                  continue;
-                } else if (newBoard[a + t[0] * c][b + t[1] * c] !== turnColor) {
+                  break;
+                } else if (newBoard[a + t[0] * c][b + t[1] * c] !== turn) {
                   //console.log(b, a, 'は置けます');
                   newBoard[a][b] = 0;
                   pass = false;
@@ -91,7 +90,6 @@ const Home = () => {
     }
 
     if (newBoard[y][x] === 0) {
-      setTurnColor(3 - turnColor);
       newBoard[y][x] = turnColor;
 
       //ひっくり返し処理
@@ -359,31 +357,35 @@ const Home = () => {
       /*ここまで右下 */
 
       // おけるマスを0にする
-      predict();
+      predict(turnColor);
 
       if (pass) {
-        pass = true;
-        predict();
+        predict(3 - turnColor);
         console.log(turnColor, 'パス');
+        setBoard(newBoard);
+        document.getElementsByClassName(styles.pass)[0].innerHTML = `${
+          turnColor === 1 ? '白のパス､黒' : '黒のパス､白'
+        }のターン`;
         document.getElementsByClassName(styles.turn)[0].innerHTML = `${
           turnColor === 1 ? '黒' : '白'
         }のターン`;
+      } else {
+        console.log('パスじゃない');
+        setBoard(newBoard);
+        setTurnColor(3 - turnColor);
+        document.getElementsByClassName(styles.turn)[0].innerHTML = `${
+          turnColor === 1 ? '白' : '黒'
+        }のターン`;
       }
-      setBoard(newBoard);
+
       // .turnクラスの文字を変更する
 
-      if (turnColor === 1) {
-        setTurnColor(2);
-        document.getElementsByClassName(styles.turn)[0].innerHTML = '白のターン';
-      }
-      if (turnColor === 2) {
-        setTurnColor(1);
-        document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
-      } //if
+      //if
     } //if newboard[y][x] === 0
   }; //onClick
   return (
     <div className={styles.container}>
+      <div className={styles.pass} />
       <div className={styles.turn}>黒のターン</div>
       <div className={styles.board}>
         {board.map((row, y) =>
