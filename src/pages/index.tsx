@@ -4,8 +4,7 @@ import styles from './index.module.css';
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
   const [board, setBoard] = useState([
-    /*
-    [-1, -1, -1, -1, -1, -1, -1, -1],
+    /*[-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, 0, -1, -1, -1],
     [-1, -1, -1, 1, 2, 0, -1, -1],
@@ -24,246 +23,11 @@ const Home = () => {
     [1, 2, 0, -1, -1, -1, -1, -1],
   ]);
   const onClick = (x: number, y: number) => {
-    console.log(x, y);
+    console.log(y, x);
+
     const newBoard: number[][] = JSON.parse(JSON.stringify(board));
-
-    if (newBoard[y][x] === 0) {
-      setTurnColor(3 - turnColor);
-      newBoard[y][x] = turnColor;
-
-      //ひっくり返し処理
-      /*ここから左上 */
-      for (let i = 1; i < 8; i++) {
-        if (y - i >= 0 && x - i >= 0) {
-          if (newBoard[y - i][x - i] === turnColor || newBoard[y - i][x - i] === 0) {
-            break;
-          } else if (newBoard[y - i][x - i] !== turnColor && newBoard[y - i][x - i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y - j >= 0 && x - j >= 0) {
-                if (newBoard[y - j][x - j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y - j][x - j] === turnColor) {
-                  console.log('${j}LT');
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y - k][x - k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで左上 */
-      /*ここから上 */
-      for (let i = 1; i < 8; i++) {
-        if (y - i >= 0) {
-          if (newBoard[y - i][x] === turnColor || newBoard[y - i][x] === 0) {
-            break;
-          } else if (newBoard[y - i][x] !== turnColor && newBoard[y - i][x] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y - j >= 0) {
-                if (newBoard[y - j][x] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y - j][x] === turnColor) {
-                  console.log(`${j}T`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y - k][x] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで上 */
-
-      /*ここから右上 */
-      for (let i = 1; i < 8; i++) {
-        if (y - i >= 0 && x + i <= 7) {
-          if (newBoard[y - i][x + i] === turnColor || newBoard[y - i][x + i] === 0) {
-            break;
-          } else if (newBoard[y - i][x + i] !== turnColor && newBoard[y - i][x + i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y - j >= 0 && x + j <= 7) {
-                if (newBoard[y - j][x + j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y - j][x + j] === turnColor) {
-                  console.log(`${j}RT`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y - k][x + k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで右上 */
-
-      /*ここから左 */
-      for (let i = 1; i < 8; i++) {
-        if (x - i >= 0) {
-          if (newBoard[y][x - i] === turnColor || newBoard[y][x - i] === 0) {
-            break;
-          } else if (newBoard[y][x - i] !== turnColor && newBoard[y][x - i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (x - j >= 0) {
-                if (newBoard[y][x - j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y][x - j] === turnColor) {
-                  console.log(`${j}L`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y][x - k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで左 */
-
-      /*ここから右 */
-      for (let i = 1; i < 8; i++) {
-        if (x + i <= 7) {
-          if (newBoard[y][x + i] === turnColor || newBoard[y][x + i] === 0) {
-            break;
-          } else if (newBoard[y][x + i] !== turnColor && newBoard[y][x + i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (x + j <= 7) {
-                if (newBoard[y][x + j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y][x + j] === turnColor) {
-                  console.log(`${j}R`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y][x + k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで右 */
-
-      /*ここから左下 */
-      for (let i = 1; i < 8; i++) {
-        if (y + i <= 7 && x - i >= 0) {
-          if (newBoard[y + i][x - i] === turnColor || newBoard[y + i][x - i] === 0) {
-            break;
-          } else if (newBoard[y + i][x - i] !== turnColor && newBoard[y + i][x - i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y + j <= 7 && x - j >= 0) {
-                if (newBoard[y + j][x - j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y + j][x - j] === turnColor) {
-                  console.log(`${j}LB`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y + k][x - k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで左下 */
-
-      /*ここから下 */
-      for (let i = 1; i < 8; i++) {
-        if (y + i <= 7) {
-          if (newBoard[y + i][x] === turnColor || newBoard[y + i][x] === 0) {
-            break;
-          } else if (newBoard[y + i][x] !== turnColor && newBoard[y + i][x] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y + j <= 7) {
-                if (newBoard[y + j][x] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y + j][x] === turnColor) {
-                  console.log(`${j}B`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y + k][x] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで下 */
-
-      /*ここから右下 */
-      for (let i = 1; i < 8; i++) {
-        if (y + i <= 7 && x + i <= 7) {
-          if (newBoard[y + i][x + i] === turnColor || newBoard[y + i][x + i] === 0) {
-            break;
-          } else if (newBoard[y + i][x + i] !== turnColor && newBoard[y + i][x + i] !== 0) {
-            let isValidMove = true;
-            for (let j = 2; j < 7; j++) {
-              if (y + j <= 7 && x + j <= 7) {
-                if (newBoard[y + j][x + j] === 0) {
-                  isValidMove = false;
-                  break;
-                } else if (newBoard[y + j][x + j] === turnColor) {
-                  console.log(`${j}RB`);
-                  for (let k = j - 1; k > 0; k--) {
-                    newBoard[y + k][x + k] = turnColor;
-                  }
-                  break;
-                }
-              }
-            }
-            if (isValidMove) {
-              break;
-            }
-          }
-        }
-      }
-      /*ここまで右下 */
-
-      // おけるマスを0にする
+    let pass = true;
+    function predict() {
       const direction = [
         [-1, -1],
         [-1, 0],
@@ -274,7 +38,7 @@ const Home = () => {
         [1, -1],
         [0, -1],
       ];
-      let pass = true;
+
       for (let a = 0; a < 8; a++) {
         for (let b = 0; b < 8; b++) {
           let checked = false;
@@ -323,11 +87,287 @@ const Home = () => {
             newBoard[a][b] = -1;
           }
         }
-        // pass
       }
+    }
+
+    if (newBoard[y][x] === 0) {
+      setTurnColor(3 - turnColor);
+      newBoard[y][x] = turnColor;
+
+      //ひっくり返し処理
+      /*ここから左上 */
+      for (let i = 1; i < 8; i++) {
+        if (y - i >= 0 && x - i >= 0) {
+          if (
+            newBoard[y - i][x - i] === turnColor ||
+            newBoard[y - i][x - i] === 0 ||
+            newBoard[y - i][x - i] === -1
+          ) {
+            break;
+          } else if (newBoard[y - i][x - i] !== turnColor && newBoard[y - i][x - i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y - j >= 0 && x - j >= 0) {
+                if (newBoard[y - j][x - j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y - j][x - j] === turnColor) {
+                  console.log(`${j}LT`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y - k][x - k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで左上 */
+      /*ここから上 */
+      for (let i = 1; i < 8; i++) {
+        if (y - i >= 0) {
+          if (
+            newBoard[y - i][x] === turnColor ||
+            newBoard[y - i][x] === 0 ||
+            newBoard[y - i][x] === -1
+          ) {
+            break;
+          } else if (newBoard[y - i][x] !== turnColor && newBoard[y - i][x] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y - j >= 0) {
+                if (newBoard[y - j][x] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y - j][x] === turnColor) {
+                  console.log(`${j}T`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y - k][x] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで上 */
+
+      /*ここから右上 */
+      for (let i = 1; i < 8; i++) {
+        if (y - i >= 0 && x + i <= 7) {
+          if (
+            newBoard[y - i][x + i] === turnColor ||
+            newBoard[y - i][x + i] === 0 ||
+            newBoard[y - i][x + i] === -1
+          ) {
+            break;
+          } else if (newBoard[y - i][x + i] !== turnColor && newBoard[y - i][x + i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y - j >= 0 && x + j <= 7) {
+                if (newBoard[y - j][x + j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y - j][x + j] === turnColor) {
+                  console.log(`${j}RT`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y - k][x + k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで右上 */
+
+      /*ここから左 */
+      for (let i = 1; i < 8; i++) {
+        if (x - i >= 0) {
+          if (
+            newBoard[y][x - i] === turnColor ||
+            newBoard[y][x - i] === 0 ||
+            newBoard[y][x - i] === -1
+          ) {
+            break;
+          } else if (newBoard[y][x - i] !== turnColor && newBoard[y][x - i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (x - j >= 0) {
+                if (newBoard[y][x - j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y][x - j] === turnColor) {
+                  console.log(`${j}L`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y][x - k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで左 */
+
+      /*ここから右 */
+      for (let i = 1; i < 8; i++) {
+        if (x + i <= 7) {
+          if (
+            newBoard[y][x + i] === turnColor ||
+            newBoard[y][x + i] === 0 ||
+            newBoard[y][x + i] === -1
+          ) {
+            break;
+          } else if (newBoard[y][x + i] !== turnColor && newBoard[y][x + i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (x + j <= 7) {
+                if (newBoard[y][x + j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y][x + j] === turnColor) {
+                  console.log(`${j}R`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y][x + k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで右 */
+
+      /*ここから左下 */
+      for (let i = 1; i < 8; i++) {
+        if (y + i <= 7 && x - i >= 0) {
+          if (
+            newBoard[y + i][x - i] === turnColor ||
+            newBoard[y + i][x - i] === 0 ||
+            newBoard[y + i][x - i] === -1
+          ) {
+            break;
+          } else if (newBoard[y + i][x - i] !== turnColor && newBoard[y + i][x - i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y + j <= 7 && x - j >= 0) {
+                if (newBoard[y + j][x - j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y + j][x - j] === turnColor) {
+                  console.log(`${j}LB`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y + k][x - k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで左下 */
+
+      /*ここから下 */
+      for (let i = 1; i < 8; i++) {
+        if (y + i <= 7) {
+          if (
+            newBoard[y + i][x] === turnColor ||
+            newBoard[y + i][x] === 0 ||
+            newBoard[y + i][x] === -1
+          ) {
+            break;
+          } else if (newBoard[y + i][x] !== turnColor && newBoard[y + i][x] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y + j <= 7) {
+                if (newBoard[y + j][x] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y + j][x] === turnColor) {
+                  console.log(`${j}B`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y + k][x] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで下 */
+
+      /*ここから右下 */
+      for (let i = 1; i < 8; i++) {
+        if (y + i <= 7 && x + i <= 7) {
+          if (
+            newBoard[y + i][x + i] === turnColor ||
+            newBoard[y + i][x + i] === 0 ||
+            newBoard[y + i][x + i] === -1
+          ) {
+            break;
+          } else if (newBoard[y + i][x + i] !== turnColor && newBoard[y + i][x + i] !== 0) {
+            let isValidMove = true;
+            for (let j = 2; j < 7; j++) {
+              if (y + j <= 7 && x + j <= 7) {
+                if (newBoard[y + j][x + j] === 0) {
+                  isValidMove = false;
+                  break;
+                } else if (newBoard[y + j][x + j] === turnColor) {
+                  console.log(`${j}RB`);
+                  for (let k = j - 1; k > 0; k--) {
+                    newBoard[y + k][x + k] = turnColor;
+                  }
+                  break;
+                }
+              }
+            }
+            if (isValidMove) {
+              break;
+            }
+          }
+        }
+      }
+      /*ここまで右下 */
+
+      // おけるマスを0にする
+      predict();
+
       if (pass) {
-        setTurnColor(3 - turnColor);
+        pass = true;
+        predict();
         console.log(turnColor, 'パス');
+        document.getElementsByClassName(styles.turn)[0].innerHTML = `${
+          turnColor === 1 ? '黒' : '白'
+        }のターン`;
       }
       setBoard(newBoard);
       // .turnクラスの文字を変更する
@@ -339,9 +379,9 @@ const Home = () => {
       if (turnColor === 2) {
         setTurnColor(1);
         document.getElementsByClassName(styles.turn)[0].innerHTML = '黒のターン';
-      }
-    }
-  };
+      } //if
+    } //if newboard[y][x] === 0
+  }; //onClick
   return (
     <div className={styles.container}>
       <div className={styles.turn}>黒のターン</div>
