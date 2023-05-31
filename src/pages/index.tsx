@@ -371,6 +371,7 @@ const Home = () => {
         }のターン`;
       } else {
         console.log('パスじゃない');
+        document.getElementsByClassName(styles.pass)[0].innerHTML = '';
         setBoard(newBoard);
         setTurnColor(3 - turnColor);
         document.getElementsByClassName(styles.turn)[0].innerHTML = `${
