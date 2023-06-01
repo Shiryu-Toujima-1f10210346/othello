@@ -3,24 +3,25 @@ import styles from './index.module.css';
 // aaa
 const Home = () => {
   const [turnColor, setTurnColor] = useState(1); // 1: 黒, 2: 白
+  let firstTurn = true;
   const [board, setBoard] = useState([
-    [-1, -1, -1, -1, -1, -1, -1, -1],
+    /*[-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, 0, -1, -1, -1],
     [-1, -1, -1, 1, 2, 0, -1, -1],
     [-1, -1, 0, 2, 1, -1, -1, -1],
     [-1, -1, -1, 0, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
-    [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],*/
 
-    /* [-1, -1, -1, -1, -1, -1, -1, -1],
+    [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [-1, -1, -1, -1, -1, -1, -1, -1],
     [1, 2, 0, -1, -1, -1, -1, -1],
-    [1, 2, 0, -1, -1, -1, -1, -1],*/
+    [1, 2, 0, -1, -1, -1, -1, -1],
   ]);
   const onClick = (x: number, y: number) => {
     console.log(y, x);
@@ -90,6 +91,7 @@ const Home = () => {
     }
 
     if (newBoard[y][x] === 0) {
+      firstTurn = false;
       newBoard[y][x] = turnColor;
 
       //ひっくり返し処理
@@ -359,6 +361,7 @@ const Home = () => {
       // おけるマスを0にする
       predict(turnColor);
 
+      // パス判定
       if (pass) {
         predict(3 - turnColor);
         console.log(turnColor, 'パス');
@@ -377,6 +380,52 @@ const Home = () => {
         document.getElementsByClassName(styles.turn)[0].innerHTML = `${
           turnColor === 1 ? '白' : '黒'
         }のターン`;
+      }
+
+      //勝利判定
+      let black = 0;
+      let white = 0;
+      for (let i = 0; i < 8; i++) {
+        for (let j = 0; j < 8; j++) {
+          switch (newBoard[i][j]) {
+            case 1:
+              black++;
+
+              break;
+            case 2:
+              white++;
+
+              break;
+          }
+        }
+      }
+      document.getElementsByClassName(styles.black)[0].innerHTML = `  黒:${black}個`;
+      document.getElementsByClassName(styles.white)[0].innerHTML = `  白:${white}個`;
+      if (black + white === 64) {
+        if (black > white) {
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '黒の勝ち!';
+          document.getElementsByClassName(styles.pass)[0].innerHTML = '';
+        } else if (black < white) {
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '白の勝ち!';
+          document.getElementsByClassName(styles.pass)[0].innerHTML = '';
+        } else {
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '引き分け';
+          document.getElementsByClassName(styles.pass)[0].innerHTML = '';
+        }
+      }
+
+      //一色の石がなくなったらゲーム終了
+      if (firstTurn === false && (black === 0 || white === 0)) {
+        if (black === 0) {
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '白の勝ち!';
+          document.getElementsByClassName(styles.white)[0].innerHTML = `👑白:${white}個`;
+          document.getElementsByClassName(styles.pass)[0].innerHTML = '';
+        }
+        if (white === 0) {
+          document.getElementsByClassName(styles.turn)[0].innerHTML = '黒の勝ち!';
+          document.getElementsByClassName(styles.black)[0].innerHTML = `👑黒:${black}個`;
+          document.getElementsByClassName(styles.pass)[0].innerHTML = '';
+        }
       }
 
       // .turnクラスの文字を変更する
@@ -411,6 +460,8 @@ const Home = () => {
           ))
         )}
       </div>
+      <div className={styles.black}>黒:2個</div>
+      <div className={styles.white}>白:2個</div>
     </div>
   );
 };
